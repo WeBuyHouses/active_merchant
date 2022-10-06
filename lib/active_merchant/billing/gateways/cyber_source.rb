@@ -207,20 +207,20 @@ module ActiveMerchant #:nodoc:
 
       # Updates a customer subscription/profile
       def update(reference, creditcard, options = {})
-        requires!(options, :order_id)
-        setup_address_hash(options)
+        #requires!(options, :order_id)
+        #setup_address_hash(options)
         commit(build_update_subscription_request(reference, creditcard, options), :update, nil, options)
       end
 
       # Removes a customer subscription/profile
       def unstore(reference, options = {})
-        requires!(options, :order_id)
+        #requires!(options, :order_id)
         commit(build_delete_subscription_request(reference, options), :unstore, nil, options)
       end
 
       # Retrieves a customer subscription/profile
       def retrieve(reference, options = {})
-        requires!(options, :order_id)
+        #requires!(options, :order_id)
         commit(build_retrieve_subscription_request(reference, options), :retrieve, nil, options)
       end
 
@@ -636,11 +636,11 @@ module ActiveMerchant #:nodoc:
 
       def add_creditcard(xml, creditcard)
         xml.tag! 'card' do
-          xml.tag! 'accountNumber', creditcard.number
-          xml.tag! 'expirationMonth', format(creditcard.month, :two_digits)
-          xml.tag! 'expirationYear', format(creditcard.year, :four_digits)
+          xml.tag!('accountNumber', creditcard.number) if creditcard.number
+          xml.tag!('expirationMonth', format(creditcard.month, :two_digits)) if creditcard.month
+          xml.tag!('expirationYear', format(creditcard.year, :four_digits)) if creditcard.year
           xml.tag!('cvNumber', creditcard.verification_value) unless @options[:ignore_cvv].to_s == 'true' || creditcard.verification_value.blank?
-          xml.tag! 'cardType', @@credit_card_codes[card_brand(creditcard).to_sym]
+          xml.tag!('cardType', @@credit_card_codes[card_brand(creditcard).to_sym]) if @@credit_card_codes[card_brand(creditcard).to_sym]
         end
       end
 
@@ -1016,6 +1016,7 @@ module ActiveMerchant #:nodoc:
       # Contact CyberSource, make the SOAP request, and parse the reply into a
       # Response object
       def commit(request, action, amount, options)
+        pp request
         begin
           raw_response = ssl_post(test? ? self.test_url : self.live_url, build_request(request, options))
         rescue ResponseError => e
