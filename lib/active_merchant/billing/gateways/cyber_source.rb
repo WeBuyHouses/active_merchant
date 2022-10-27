@@ -1016,7 +1016,6 @@ module ActiveMerchant #:nodoc:
       # Contact CyberSource, make the SOAP request, and parse the reply into a
       # Response object
       def commit(request, action, amount, options)
-        pp request
         begin
           raw_response = ssl_post(test? ? self.test_url : self.live_url, build_request(request, options))
         rescue ResponseError => e
